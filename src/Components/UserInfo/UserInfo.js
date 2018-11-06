@@ -1,21 +1,25 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import firebase from "firebase";
 import Login from "../Login/Login";
 import base, { firebaseApp } from "../../base";
+import './UserInfo.css';
+import Friend from '../../Containers/Friend/Friend';
+import Chat from '../../Containers/Chat/Chat';
 
 class UserInfo extends Component {
     constructor(props){
         super(props)
         this.state = {
-            email: null,
-            displayName: null
+            userID: null,
         };
     }
 
     componentDidMount() {
         firebase.auth().onAuthStateChanged(user => {
         if (user) {
+            console.log(JSON.stringify(user));
             this.authHandler({ user });
+            this._getFriends();
         }
         });
     }
@@ -29,19 +33,36 @@ class UserInfo extends Component {
     //     });
     // };
 
+    _getFriends = () => {
+        firebaseApp.database().ref('/').child(this.state.userID).on('value', (snapshot) => {
+            snapshot = snapshot.val();
+            this.props.updateFriendList(snapshot.friendList);
+        });
+    }
+
     authHandler = authData => {
         const user = authData.user;
+        this.props.updateUsername(user.displayName);
+        this.props.updateAvatar(user.photoURL);
+        this.props.updateUserID(user.uid);
         this.setState({
-            email: user.email,
-            displayName: user.displayName
+            userID: user.uid,
         });
+        firebaseApp.database().ref('/').child(user.uid).child('onlineStatus').set(
+            'online'
+        )
+        firebaseApp.database().ref('/').child(user.uid).child('avatar').set(
+            user.photoURL
+        )
+        firebaseApp.database().ref('/').child(user.uid).child('username').set(
+            user.displayName
+        )
     };
 
     authenticate = provider => {
         try{
             // console.log(JSON.stringify(provider));
             const authProvider = new firebase.auth[`${provider}AuthProvider`]();
-            console.log(JSON.stringify(authProvider));
             firebaseApp
             .auth()
                 .signInWithPopup(authProvider)
@@ -55,30 +76,42 @@ class UserInfo extends Component {
     logout = async () => {
         console.log("logout");
         await firebase.auth().signOut();
-        this.setState({ email: null, displayName: null });
+        this.props.updateUsername(null);
+        this.props.updateAvatar(null);
+        this.props.updateUserID(null);
+
+        const time = new Date();
+        const hour = time.getHours();
+        const minutes = time.getMinutes();
+        const result = hour + ":" + minutes + " " + time.toDateString();
+        firebaseApp.database().ref('/').child(this.state.userID).child('onlineStatus').set(
+            result
+        )
     };
 
     render() {
         const logout = <button onClick={this.logout}>Log Out!</button>;
-        if (!this.state.email) {
-        return <Login authenticate={this.authenticate} />;
+        if (!this.props.username) {
+            return <Login authenticate={this.authenticate} />;
         }
         return (
-            <Fragment>
-                <div className="user-info">
-                <label>User name: </label>
-                <span type="text" id="email">
-                    {' '}{this.state.displayName}
-                </span>
+            <div className = 'view'>
+                <Chat/>
+                <div>
+                    <p>Welcome: {this.props.username}</p>
+                    <img className = 'avatar' src = {this.props.avatar}></img>
                 </div>
-                <div className="user-info">
-                    <label>Email: </label>
-                    <span type="text" id="email">
-                        {' '}{this.state.email}
-                    </span>
-                </div>
+                <div>Friends</div>
+                {this.props.friendList && this.props.friendList.map((person, index) => (
+                    <div key = {index}>
+                        <Friend 
+                            userID = {person.userID}
+                            index = {index}
+                        /> 
+                    </div>
+                ))}
                 <div>{logout}</div>
-            </Fragment>
+            </div>
         );
     }
 }

@@ -1,0 +1,25 @@
+.chat {
+    position: absolute;
+    right: 0px;
+    width: 700px;
+    height: 500px;
+}
+
+.button-send{
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 10%;
+}
+
+.input {
+    position: absolute;
+    bottom: 0px;
+    width: 80%;
+}
+
+.chat-view{
+    width: 700px;
+    height: 450px;
+    background-color: beige;
+}

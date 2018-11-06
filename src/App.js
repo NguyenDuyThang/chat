@@ -3,7 +3,7 @@ import logo from "./logo.svg";
 import "./App.css";
 
 import { Switch, Route } from 'react-router-dom'
-import UserInfo from "./Components/UserInfo/UserInfo";
+import UserInfo from "./Containers/UserInfo/UserInfo";
 
 const Main = () => (
   <main>
