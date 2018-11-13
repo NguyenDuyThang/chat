@@ -1,6 +1,6 @@
 .chat {
     position: absolute;
-    right: 0px;
+    right: 4%;
     width: 700px;
     height: 500px;
 }
@@ -8,18 +8,43 @@
 .button-send{
     position: absolute;
     bottom: 0px;
-    right: 0px;
+    right: 29%;
     width: 10%;
 }
 
 .input {
     position: absolute;
     bottom: 0px;
-    width: 80%;
+    width: 60%;
 }
 
 .chat-view{
     width: 700px;
     height: 450px;
     background-color: beige;
+    overflow: auto;
+}
+
+.left-text{
+    list-style-type: none;
+    text-align: start;
+    /* color: white; */
+    /* background-color: rgb(50, 50, 243); */
+}
+
+.right-text{
+    list-style-type: none;
+    text-align: end;
+    /* color: white; */
+    /* background-color: rgb(50, 50, 243); */
+}
+
+.image-link{
+    width: 50%;
+    height: 50%;
+}
+
+.pick-image{
+    position: absolute;
+    right: -8%;
 }

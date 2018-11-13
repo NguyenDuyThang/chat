@@ -1,4 +1,6 @@
+import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { firebaseConnect } from 'react-redux-firebase';
 import UserInfo from '../../Components/UserInfo/UserInfo';
 import { SCREEN_NAME as USERINFO } from './models';
 import { 
@@ -34,4 +36,7 @@ const mapDispatchToProps = ( dispatch, props ) => ({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserInfo);
+export default compose(
+    firebaseConnect(),
+    connect(mapStateToProps, mapDispatchToProps),
+)(UserInfo);

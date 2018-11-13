@@ -1,4 +1,6 @@
+import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { firebaseConnect } from 'react-redux-firebase';
 import Chat from '../../Components/Chat/Chat';
 import { SCREEN_NAME as CHAT } from './models';
 import { SCREEN_NAME as USER } from '../UserInfo/models';
@@ -8,7 +10,7 @@ const mapStateToProps = ( state ) => ({
     chatHistory: state[CHAT].chatHistory,
     chatIndex: state[CHAT].chatIndex,
     chatUserID: state[CHAT].chatUserID,
-    userID: state[USER].userID
+    userID: state[USER].userID,
 });
 
 const mapDispatchToProps = ( dispatch, props ) => ({
@@ -23,4 +25,7 @@ const mapDispatchToProps = ( dispatch, props ) => ({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default compose(
+    firebaseConnect(),
+    connect(mapStateToProps, mapDispatchToProps),
+)(Chat);
